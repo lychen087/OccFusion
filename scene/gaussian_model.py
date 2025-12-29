@@ -26,6 +26,7 @@ import pickle
 import torch.nn.functional as F
 from nets.mlp_delta_body_pose import BodyPoseRefiner
 from nets.mlp_delta_weight_lbs import LBSOffsetDecoder
+from pytorch3d.ops import knn_points
 
 
 def gaussian_3d_coeff(xyzs, covs):
@@ -114,6 +115,12 @@ class GaussianModel:
             self.lweight_offset_decoder = LBSOffsetDecoder(total_bones=total_bones)
             self.lweight_offset_decoder.to(self.device)
 
+    def knn_pytorch3d(self, ref, query, k):
+        """使用 pytorch3d 的 knn 替代"""
+        # ref: [B, N, 3], query: [B, M, 3]
+        result = knn_points(query, ref, K=k, return_sorted=True)
+        return result.dists.sqrt(), result.idx
+    
     def capture(self):
         return (
             self.active_sh_degree,
@@ -578,7 +585,8 @@ class GaussianModel:
                                               torch.max(self.get_scaling, dim=1).values <= self.percent_dense*scene_extent)
 
         # for each gaussian point, find its nearest 2 points and return the distance
-        _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())     
+        # _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())    
+        _, point_ids = self.knn_pytorch3d(self._xyz[None].detach(), self._xyz[None].detach(), k=2) # FIX to pytorch3d knn
         xyz = self._xyz[point_ids[0]].detach()
         rotation_q = self._rotation[point_ids[0]].detach()
         scaling_diag = self.get_scaling[point_ids[0]].detach()
@@ -621,7 +629,8 @@ class GaussianModel:
                                               torch.max(self.get_scaling, dim=1).values > self.percent_dense*scene_extent)
 
         # for each gaussian point, find its nearest 2 points and return the distance
-        _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())     
+        # _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())    
+        _, point_ids = self.knn_pytorch3d(self._xyz[None].detach(), self._xyz[None].detach(), k=2) # FIX to pytorch3d knn 
         xyz = self._xyz[point_ids[0]].detach()
         rotation_q = self._rotation[point_ids[0]].detach()
         scaling_diag = self.get_scaling[point_ids[0]].detach()
@@ -667,7 +676,8 @@ class GaussianModel:
                                               torch.max(self.get_scaling, dim=1).values <= self.percent_dense*scene_extent)
 
         # for each gaussian point, find its nearest 2 points and return the distance
-        _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())     
+        # _, point_ids = self.knn_near_2(self._xyz[None].detach(), self._xyz[None].detach())   
+        _, point_ids = self.knn_pytorch3d(self._xyz[None].detach(), self._xyz[None].detach(), k=2)
         xyz = self._xyz[point_ids[0]].detach()
         rotation_q = self._rotation[point_ids[0]].detach()
         scaling_diag = self.get_scaling[point_ids[0]].detach()

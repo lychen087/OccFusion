@@ -1,0 +1,11 @@
+output/
+data/
+oc_generations/
+assets/
+*.pyc
+**/__pycache__/
+.vscode/
+**/build
+**/*.egg-info
+example_data/
+submodules/KNN_CUDA/

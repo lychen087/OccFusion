@@ -82,12 +82,19 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
    
-
+        train_cams = scene.getTrainCameras()
+        test_cams = scene.getTestCameras()
+        all_cams = train_cams + test_cams
+        
+        print(f"Train cameras: {len(train_cams)}")
+        print(f"Test cameras: {len(test_cams)}")
+        print(f"Total cameras: {len(all_cams)}")
+        
         if not skip_train:
-             render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), gaussians, pipeline, background, canonical, canonical_pose)
+            render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), gaussians, pipeline, background, canonical, canonical_pose)
 
         if not skip_test:
-             render_set(dataset.model_path, "test", scene.loaded_iter, scene.getTestCameras(), gaussians, pipeline, background, canonical, canonical_pose)
+            render_set(dataset.model_path, "test", scene.loaded_iter, scene.getTestCameras(), gaussians, pipeline, background, canonical, canonical_pose)
 
 
 

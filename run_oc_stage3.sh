@@ -1,14 +1,17 @@
 DATA_ROOT="data/" # path to sequences
 NUM_ITER=1800 # number of iterations for the refinement stage
-OPTIM_NUM_ITER=1200 # number of iterations for the optimization stage (this localizes the right checkpoint)
+OPTIM_NUM_ITER=3000 # number of iterations for the optimization stage (this localizes the right checkpoint)
 
 
-SUBJECT="0011_02_1_w2a"
+# SUBJECT="0011_02_1_w2a"
 # SUBJECT="0011_02_2_w2a"
-# SUBJECT="0013_02_w2a"
+SUBJECT="0013_02_w2a"
 # SUBJECT="0038_04_w2a"
 # SUBJECT="0039_02_w2a"
 # SUBJECT="0041_00_w2a"
+
+export CUDA_LAUNCH_BLOCKING=1
+export TORCH_USE_CUDA_DSA=1
 
 
 CKPT=output/ocmotion/${SUBJECT}/chkpnt${OPTIM_NUM_ITER}.pth

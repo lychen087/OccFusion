@@ -236,7 +236,8 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
 
             norm_data = im_data / 255.0
             arr = norm_data[:,:,:3] * norm_data[:, :, 3:4] + bg * (1 - norm_data[:, :, 3:4])
-            image = Image.fromarray(np.array(arr*255.0, dtype=np.byte), "RGB")
+            # image = Image.fromarray(np.array(arr*255.0, dtype=np.byte), "RGB")
+            image = Image.fromarray(np.array(arr*255.0, dtype=np.uint8), "RGB") # FIX here
 
             fovy = focal2fov(fov2focal(fovx, image.size[0]), image.size[1])
             FovY = fovy 
@@ -935,7 +936,7 @@ def readCamerasOcMotion(path, gen_root, output_view, white_background, image_sca
         frame_start = 320
         frame_end = 374
         pose_interval = 1
-    else:
+    else: # OcMotion only takes 50 frames for training
         frame_start = 0
         frame_end = 10000
         pose_interval = 2
@@ -1018,10 +1019,13 @@ def readCamerasOcMotion(path, gen_root, output_view, white_background, image_sca
                     gen_image = cv2.resize(gen_image, (W, H), interpolation=cv2.INTER_AREA)
                 K[:2] = K[:2] * ratio
 
-            image = Image.fromarray(np.array(image*255.0, dtype=np.byte), "RGB")
+            # image = Image.fromarray(np.array(image*255.0, dtype=np.byte), "RGB")
+            image = Image.fromarray(np.array(image*255.0, dtype=np.uint8), "RGB")  # FIX here
+
 
             if gen_image is not None:
-                gen_image = Image.fromarray(np.array(gen_image*255.0, dtype=np.byte), "RGB")
+                # gen_image = Image.fromarray(np.array(gen_image*255.0, dtype=np.byte), "RGB")
+                gen_image = Image.fromarray(np.array(gen_image*255.0, dtype=np.uint8), "RGB")  # FIX here
 
 
             focalX = K[0,0]

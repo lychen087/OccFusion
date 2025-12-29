@@ -1,11 +1,11 @@
 DATA_ROOT="data/" # path to sequences
-NUM_ITER=1200 # path to SAM-HQ checkpoint
+NUM_ITER=3000 # path to SAM-HQ checkpoint
 STEP=35 # num of steps for stable diffusion inference
 
 
-SUBJECT="0011_02_1_w2a"
+# SUBJECT="0011_02_1_w2a"
 # SUBJECT="0011_02_2_w2a"
-# SUBJECT="0013_02_w2a"
+SUBJECT="0013_02_w2a"
 # SUBJECT="0038_04_w2a"
 # SUBJECT="0039_02_w2a"
 # SUBJECT="0041_00_w2a"
